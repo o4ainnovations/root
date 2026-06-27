@@ -31,7 +31,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.o4ainnovations.com"),
+  metadataBase: new URL("https://o4ainnovations.com"),
   title: {
     default: "O4A | A Holding Company",
     template: "%s | O4A",
