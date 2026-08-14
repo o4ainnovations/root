@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Lora, Playfair_Display, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { COMPANY } from "@/lib/seo/constants";
-import { Navbar } from "@/components/layout/navbar";
+import { SiteNav } from "@/components/layout/site-nav";
 import { Footer } from "@/components/layout/footer";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
@@ -72,7 +72,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col font-serif antialiased">
         <AuthProvider>
           <ThemeProvider>
-            <Navbar />
+            <SiteNav />
             <main className="flex-1">{children}</main>
             <Footer />
             <Toaster />
