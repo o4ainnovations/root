@@ -1,4 +1,4 @@
-import { sanityClient } from "@/lib/sanity";
+import { sanityClientFresh } from "@/lib/sanity";
 import { ScrollReveal } from "@/components/animations/scroll-reveal";
 import { buildMetadata, BreadcrumbSchema } from "@/lib/seo";
 import type { PageContent } from "@/types";
@@ -18,7 +18,7 @@ const FALLBACK_GOV =
   "Strong governance is the foundation of O4A. Our board oversees ESG strategy, risk management, and ethical conduct. We maintain transparent policies and comply with all applicable laws and regulations.";
 
 export async function generateMetadata() {
-  const pageContent = await sanityClient.fetch<PageContent | null>(
+  const pageContent = await sanityClientFresh.fetch<PageContent | null>(
     `*[_type == "pageContent" && slug.current == "esg"][0]{body,seo}`
   );
   return buildMetadata({
@@ -31,7 +31,7 @@ export async function generateMetadata() {
 }
 
 export default async function ESGPage() {
-  const pageContent = await sanityClient.fetch<PageContent | null>(
+  const pageContent = await sanityClientFresh.fetch<PageContent | null>(
     `*[_type == "pageContent" && slug.current == "esg"][0]{body,seo}`
   );
   const b = (pageContent?.body as Record<string, unknown>) || {};

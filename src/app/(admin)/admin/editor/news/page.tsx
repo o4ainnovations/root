@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { sanityClient } from "@/lib/sanity";
+import { sanityClient, sanityClientFresh } from "@/lib/sanity";
 import { COMPANY } from "@/lib/seo/constants";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -59,7 +59,7 @@ export default function NewsEditorPage() {
 
   useEffect(() => {
     async function load() {
-      const doc = await sanityClient.fetch<{ seo?: { metaTitle?: string; metaDescription?: string }; body?: Record<string, unknown> }>(
+      const doc = await sanityClientFresh.fetch<{ seo?: { metaTitle?: string; metaDescription?: string }; body?: Record<string, unknown> }>(
         `*[_type == "pageContent" && slug.current == "news"][0]{_id,title,seo,body}`
       );
       if (doc) {

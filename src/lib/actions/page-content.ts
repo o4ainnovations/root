@@ -1,6 +1,6 @@
 "use server";
 
-import { sanityWriteClient, sanityClient } from "@/lib/sanity";
+import { sanityWriteClient, sanityClientFresh } from "@/lib/sanity";
 import { requireAuth } from "@/lib/actions/guard";
 import { revalidateTag } from "next/cache";
 import { createPageSchema, updatePageSchema } from "@/lib/validations/page-content";
@@ -96,7 +96,7 @@ export async function upsertPage(data: {
     throw new Error(`Validation failed: ${parsed.error.issues.map((e) => e.message).join(", ")}`);
   }
   await requireAuth();
-  const existing = await sanityClient.fetch<{ _id: string } | null>(
+  const existing = await sanityClientFresh.fetch<{ _id: string } | null>(
     `*[_type == "pageContent" && slug.current == $slug][0]{_id}`,
     { slug: data.slug },
   );

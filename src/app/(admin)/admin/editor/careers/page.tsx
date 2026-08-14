@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { sanityClient } from "@/lib/sanity";
+import { sanityClient, sanityClientFresh } from "@/lib/sanity";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -63,7 +63,7 @@ export default function CareersEditorPage() {
 
   useEffect(() => {
     async function load() {
-      const doc = await sanityClient.fetch<{ seo?: { metaTitle?: string; metaDescription?: string }; body?: Record<string, unknown> }>(
+      const doc = await sanityClientFresh.fetch<{ seo?: { metaTitle?: string; metaDescription?: string }; body?: Record<string, unknown> }>(
         `*[_type == "pageContent" && slug.current == "careers"][0]{_id,title,seo,body}`
       );
       if (doc) {

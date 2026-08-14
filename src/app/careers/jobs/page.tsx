@@ -1,4 +1,4 @@
-import { sanityFetch, sanityClient } from "@/lib/sanity";
+import { sanityFetch, sanityClientFresh } from "@/lib/sanity";
 import { JobCard } from "@/components/sections/job-card";
 import { ScrollReveal } from "@/components/animations/scroll-reveal";
 import { buildMetadata, BreadcrumbSchema, JsonLd, buildJobPostingSchema } from "@/lib/seo";
@@ -6,7 +6,7 @@ import { COMPANY } from "@/lib/seo/constants";
 import type { Job, PageContent } from "@/types";
 
 export async function generateMetadata() {
-  const pageContent = await sanityClient.fetch<PageContent | null>(
+  const pageContent = await sanityClientFresh.fetch<PageContent | null>(
     `*[_type == "pageContent" && slug.current == "careers-jobs"][0]{seo}`
   );
   return buildMetadata({

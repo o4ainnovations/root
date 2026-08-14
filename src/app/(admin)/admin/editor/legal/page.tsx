@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { sanityClient } from "@/lib/sanity";
+import { sanityClientFresh } from "@/lib/sanity";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -29,7 +29,7 @@ export default function LegalEditorPage() {
   const [noindex, setNoindex] = useState(LEGAL_DEFAULTS.noindex);
 
   useEffect(() => {
-    sanityClient
+    sanityClientFresh
       .fetch<{ seo?: { metaTitle?: string; metaDescription?: string; noindex?: boolean } }>(
         `*[_type == "pageContent" && slug.current == "legal"][0]{_id,seo}`
       )

@@ -1,4 +1,4 @@
-import { sanityClient } from "@/lib/sanity";
+import { sanityClient, sanityClientFresh } from "@/lib/sanity";
 import { JobCard } from "@/components/sections/job-card";
 import { ScrollReveal } from "@/components/animations/scroll-reveal";
 import { buildMetadata, BreadcrumbSchema, JsonLd, buildJobPostingSchema } from "@/lib/seo";
@@ -41,7 +41,7 @@ const FALLBACK_STEPS = [
 ];
 
 export async function generateMetadata() {
-  const pageContent = await sanityClient.fetch<PageContent | null>(
+  const pageContent = await sanityClientFresh.fetch<PageContent | null>(
     `*[_type == "pageContent" && slug.current == "careers"][0]{body,seo}`
   );
   return buildMetadata({
@@ -54,7 +54,7 @@ export async function generateMetadata() {
 }
 
 export default async function CareersPage() {
-  const pageContent = await sanityClient.fetch<PageContent | null>(
+  const pageContent = await sanityClientFresh.fetch<PageContent | null>(
     `*[_type == "pageContent" && slug.current == "careers"][0]{body,seo}`
   );
   const b = (pageContent?.body as Record<string, unknown>) || {};

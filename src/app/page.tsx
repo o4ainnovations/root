@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { sanityClient } from "@/lib/sanity";
+import { sanityClientFresh } from "@/lib/sanity";
 import { buildMetadata, JsonLd, buildCorporationSchema, buildWebSiteSchema, BreadcrumbSchema } from "@/lib/seo";
 import type { PageContent } from "@/types";
 
 export async function generateMetadata() {
-  const pageContent = await sanityClient.fetch<PageContent | null>(
+  const pageContent = await sanityClientFresh.fetch<PageContent | null>(
     `*[_type == "pageContent" && slug.current == "home"][0]{body,seo}`
   );
   return buildMetadata({
@@ -17,7 +17,7 @@ export async function generateMetadata() {
 }
 
 export default async function HomePage() {
-  const pageContent = await sanityClient.fetch<PageContent | null>(
+  const pageContent = await sanityClientFresh.fetch<PageContent | null>(
     `*[_type == "pageContent" && slug.current == "home"][0]{body,seo}`
   );
   const b = (pageContent?.body as Record<string, unknown>) || {};

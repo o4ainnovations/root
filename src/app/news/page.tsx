@@ -1,4 +1,4 @@
-import { sanityFetch, sanityClient } from "@/lib/sanity";
+import { sanityFetch, sanityClientFresh } from "@/lib/sanity";
 import { PressList } from "@/components/sections/press-list";
 import { ScrollReveal } from "@/components/animations/scroll-reveal";
 import { buildMetadata, BreadcrumbSchema } from "@/lib/seo";
@@ -6,7 +6,7 @@ import { COMPANY } from "@/lib/seo/constants";
 import type { PressRelease } from "@/types";
 
 export async function generateMetadata() {
-  const pageContent = await sanityClient.fetch<{ seo?: { metaTitle?: string; metaDescription?: string } }>(
+  const pageContent = await sanityClientFresh.fetch<{ seo?: { metaTitle?: string; metaDescription?: string } }>(
     `*[_type == "pageContent" && slug.current == "news"][0]{seo}`
   );
   return buildMetadata({
@@ -29,7 +29,7 @@ const PRESS_QUERY = `*[_type == "pressRelease"] | order(date desc) {
 }`;
 
 export default async function NewsroomPage() {
-  const pageContent = await sanityClient.fetch(
+  const pageContent = await sanityClientFresh.fetch(
     '*[_type == "pageContent" && slug.current == "news"][0]{body,seo}'
   );
   const b = (pageContent?.body as Record<string, unknown>) || {};

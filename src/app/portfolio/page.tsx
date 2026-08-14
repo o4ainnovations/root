@@ -1,11 +1,11 @@
-import { sanityFetch, sanityClient } from "@/lib/sanity";
+import { sanityFetch, sanityClientFresh } from "@/lib/sanity";
 import { SubsidiaryCard } from "@/components/sections/subsidiary-card";
 import { ScrollReveal } from "@/components/animations/scroll-reveal";
 import { buildMetadata, BreadcrumbSchema } from "@/lib/seo";
 import type { Subsidiary, PageContent } from "@/types";
 
 export async function generateMetadata() {
-  const pageContent = await sanityClient.fetch<PageContent | null>(
+  const pageContent = await sanityClientFresh.fetch<PageContent | null>(
     `*[_type == "pageContent" && slug.current == "portfolio"][0]{seo}`
   );
   return buildMetadata({
@@ -33,7 +33,7 @@ export default async function PortfolioPage() {
     tags: ["subsidiary"],
   });
 
-  const pageContent = await sanityClient.fetch<PageContent | null>(
+  const pageContent = await sanityClientFresh.fetch<PageContent | null>(
     `*[_type == "pageContent" && slug.current == "portfolio"][0]{body,seo}`
   );
   const b = (pageContent?.body as Record<string, unknown>) || {};

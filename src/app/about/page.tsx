@@ -1,4 +1,4 @@
-import { sanityFetch, sanityClient } from "@/lib/sanity";
+import { sanityFetch, sanityClientFresh } from "@/lib/sanity";
 import { TeamCard } from "@/components/sections/team-card";
 import { Timeline } from "@/components/sections/timeline";
 import { StatCounter } from "@/components/sections/stat-counter";
@@ -9,7 +9,7 @@ import { urlFor } from "@/lib/sanity";
 import type { TeamMember } from "@/types";
 
 export async function generateMetadata() {
-  const pageContent = await sanityClient.fetch<{ seo?: { metaTitle?: string; metaDescription?: string } }>(
+  const pageContent = await sanityClientFresh.fetch<{ seo?: { metaTitle?: string; metaDescription?: string } }>(
     `*[_type == "pageContent" && slug.current == "about"][0]{seo}`
   );
   return buildMetadata({
@@ -45,7 +45,7 @@ Our approach is patient and long-term. We do not flip companies — we build the
 Integrity, operational excellence, and a relentless focus on creating value define everything we do.`;
 
 export default async function AboutPage() {
-  const pageContent = await sanityClient.fetch(
+  const pageContent = await sanityClientFresh.fetch(
     '*[_type == "pageContent" && slug.current == "about"][0]{body,seo}'
   );
   const b = (pageContent?.body as Record<string, unknown>) || {};

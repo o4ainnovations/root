@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { sanityClient } from "@/lib/sanity";
+import { sanityClientFresh } from "@/lib/sanity";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -26,7 +26,7 @@ export default function ContactEditorPage() {
   const [officeLocation, setOfficeLocation] = useState(CONTACT_DEFAULTS.officeLocation);
 
   useEffect(() => {
-    sanityClient
+    sanityClientFresh
       .fetch<{ seo?: { metaTitle?: string; metaDescription?: string }; body?: Record<string, unknown> }>(
         `*[_type == "pageContent" && slug.current == "contact"][0]{_id,seo,body}`
       )

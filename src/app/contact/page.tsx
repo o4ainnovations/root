@@ -1,11 +1,11 @@
-import { sanityClient } from "@/lib/sanity";
+import { sanityClientFresh } from "@/lib/sanity";
 import { ContactForm } from "@/components/sections/contact-form";
 import { ScrollReveal } from "@/components/animations/scroll-reveal";
 import { buildMetadata, BreadcrumbSchema } from "@/lib/seo";
 import { COMPANY } from "@/lib/seo/constants";
 
 export async function generateMetadata() {
-  const pageContent = await sanityClient.fetch<{ seo?: { metaTitle?: string; metaDescription?: string } }>(
+  const pageContent = await sanityClientFresh.fetch<{ seo?: { metaTitle?: string; metaDescription?: string } }>(
     `*[_type == "pageContent" && slug.current == "contact"][0]{seo}`
   );
   return buildMetadata({
@@ -16,7 +16,7 @@ export async function generateMetadata() {
 }
 
 export default async function ContactPage() {
-  const pageContent = await sanityClient.fetch(
+  const pageContent = await sanityClientFresh.fetch(
     '*[_type == "pageContent" && slug.current == "contact"][0]{body,seo}'
   );
   const b = (pageContent?.body as Record<string, unknown>) || {};

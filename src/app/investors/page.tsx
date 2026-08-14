@@ -1,4 +1,4 @@
-import { sanityFetch, sanityClient } from "@/lib/sanity";
+import { sanityFetch, sanityClientFresh } from "@/lib/sanity";
 import { DownloadList } from "@/components/sections/download-list";
 import { ScrollReveal } from "@/components/animations/scroll-reveal";
 import { buildMetadata, BreadcrumbSchema } from "@/lib/seo";
@@ -6,7 +6,7 @@ import { COMPANY } from "@/lib/seo/constants";
 import type { Download } from "@/types";
 
 export async function generateMetadata() {
-  const pageContent = await sanityClient.fetch<{ seo?: { metaTitle?: string; metaDescription?: string } }>(
+  const pageContent = await sanityClientFresh.fetch<{ seo?: { metaTitle?: string; metaDescription?: string } }>(
     `*[_type == "pageContent" && slug.current == "investors"][0]{seo}`
   );
   return buildMetadata({
@@ -26,7 +26,7 @@ const DOWNLOADS_QUERY = `*[_type == "download"] | order(publishDate desc) {
 }`;
 
 export default async function InvestorsPage() {
-  const pageContent = await sanityClient.fetch(
+  const pageContent = await sanityClientFresh.fetch(
     '*[_type == "pageContent" && slug.current == "investors"][0]{body,seo}'
   );
   const b = (pageContent?.body as Record<string, unknown>) || {};
