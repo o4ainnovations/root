@@ -10,9 +10,17 @@ export function JobCard({ job }: { job: JobListing }) {
       <CardContent className="p-6">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1">
-            <h3 className="font-heading text-xl font-bold text-ink group-hover:text-gold transition-colors">
-              {job.title}
-            </h3>
+            {job.slug ? (
+              <Link href={`/careers/jobs/${job.slug}`}>
+                <h3 className="font-heading text-xl font-bold text-ink group-hover:text-gold transition-colors">
+                  {job.title}
+                </h3>
+              </Link>
+            ) : (
+              <h3 className="font-heading text-xl font-bold text-ink group-hover:text-gold transition-colors">
+                {job.title}
+              </h3>
+            )}
             <div className="flex flex-wrap gap-3 mt-3 mb-4">
               <span className="label-uppercase inline-flex items-center gap-1">
                 <MapPin className="h-3 w-3" />

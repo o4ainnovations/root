@@ -82,6 +82,7 @@ export default async function CareersPage() {
     department: job.department,
     type: job.employmentType,
     subsidiary: job.subsidiary,
+    slug: job.slug?.current,
     url: job.applyUrl,
   }));
 

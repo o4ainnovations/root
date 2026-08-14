@@ -153,5 +153,6 @@ export interface JobListing {
   department: string;
   type: string;
   subsidiary: string;
+  slug?: string;
   url?: string;
 }

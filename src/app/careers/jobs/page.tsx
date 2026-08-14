@@ -73,7 +73,8 @@ export default async function JobsPage() {
                     department: job.department,
                     type: job.employmentType,
                     subsidiary: job.subsidiary,
-                    url: job.applyUrl || `/careers/jobs/${job.slug.current}`,
+                    slug: job.slug.current,
+                    url: job.applyUrl,
                   }}
                 />
               </ScrollReveal>
