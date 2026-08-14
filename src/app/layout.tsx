@@ -3,7 +3,7 @@ import { Inter, Lora, Playfair_Display, JetBrains_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/react";
 import { COMPANY } from "@/lib/seo/constants";
 import { SiteNav } from "@/components/layout/site-nav";
-import { Footer } from "@/components/layout/footer";
+import { SiteFooter } from "@/components/layout/site-footer";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
@@ -74,7 +74,7 @@ export default function RootLayout({
           <ThemeProvider>
             <SiteNav />
             <main className="flex-1">{children}</main>
-            <Footer />
+            <SiteFooter />
             <Toaster />
           </ThemeProvider>
         </AuthProvider>

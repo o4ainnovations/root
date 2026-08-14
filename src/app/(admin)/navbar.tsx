@@ -12,6 +12,7 @@ import {
   Shield,
   Menu,
   X,
+  Home,
 } from "lucide-react";
 import { SignOutButton } from "@/components/layout/sign-out-button";
 
@@ -37,6 +38,13 @@ export function AdminNavbar({ userRole }: { userRole: "admin" | "editor" }) {
 
         {/* Desktop nav */}
         <nav className="hidden sm:flex items-center gap-1">
+          <Link
+            href="/"
+            aria-label="Home"
+            className="nav-link px-3 py-2 hover:bg-paper-highlight transition-colors flex items-center gap-1.5"
+          >
+            <Home className="h-3.5 w-3.5" />
+          </Link>
           {visible.map((link) => (
             <Link
               key={link.href}
@@ -75,6 +83,14 @@ export function AdminNavbar({ userRole }: { userRole: "admin" | "editor" }) {
       {open && (
         <div className="sm:hidden border-t border-border">
           <nav className="px-2 py-2 flex flex-col">
+            <Link
+              href="/"
+              onClick={() => setOpen(false)}
+              className="nav-link text-sm px-3 py-2.5 hover:bg-paper-highlight transition-colors flex items-center gap-2.5"
+            >
+              <Home className="h-4 w-4" />
+              Home
+            </Link>
             {visible.map((link) => (
               <Link
                 key={link.href}

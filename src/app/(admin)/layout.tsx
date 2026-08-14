@@ -1,7 +1,6 @@
 import { auth } from "@/lib/auth";
 import { sanityClient } from "@/lib/sanity";
 import { AdminNavbar } from "./navbar";
-import { PlatformNav } from "@/components/layout/platform-nav";
 import { redirect } from "next/navigation";
 import { SignOutButton } from "@/components/layout/sign-out-button";
 
@@ -59,7 +58,6 @@ export default async function AdminLayout({
     <div className="min-h-screen flex flex-col">
       <AdminNavbar userRole={user.role as "admin" | "editor"} />
       <main className="mx-auto w-full max-w-7xl flex-1 px-4 sm:px-6 py-6 sm:py-8">{children}</main>
-      <PlatformNav />
     </div>
   );
 }
