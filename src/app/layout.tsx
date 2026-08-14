@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Lora, Playfair_Display, JetBrains_Mono } from "next/font/google";
-import { GoogleAnalytics } from "@next/third-parties/google";
+import { Analytics } from "@vercel/analytics/react";
 import { COMPANY } from "@/lib/seo/constants";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
@@ -79,9 +79,18 @@ export default function RootLayout({
           </ThemeProvider>
         </AuthProvider>
       </body>
-      {process.env.NEXT_PUBLIC_GA_ID && (
-        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
-      )}
+      <Analytics />
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-6T8N5CBPG0"></script>
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-6T8N5CBPG0');
+          `,
+        }}
+      />
     </html>
   );
 }

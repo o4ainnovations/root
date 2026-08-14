@@ -2,11 +2,11 @@ import type { NextConfig } from "next";
 
 const csp = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com",
+  "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://va.vercel-scripts.com",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "img-src 'self' data: https: blob:",
   "font-src 'self' https://fonts.gstatic.com",
-  "connect-src 'self' https://*.sanity.io https://*.apicdn.sanity.io https://*.google-analytics.com https://*.analytics.google.com https://formspree.io",
+  "connect-src 'self' https://*.sanity.io https://*.apicdn.sanity.io https://*.google-analytics.com https://*.analytics.google.com https://formspree.io https://va.vercel-scripts.com",
   "frame-src 'self'",
   "object-src 'none'",
   "base-uri 'self'",
