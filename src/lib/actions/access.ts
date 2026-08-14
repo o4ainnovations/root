@@ -14,7 +14,7 @@ export async function addAuthorizedUser(username: string, role: "admin" | "edito
     await requireAuth();
     await sanityWriteClient.create({
       _type: "authorizedUser",
-      username: parsed.data.username,
+      username: parsed.data.username.toLowerCase(),
       role: parsed.data.role,
       active: true,
     });

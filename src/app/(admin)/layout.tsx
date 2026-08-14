@@ -32,7 +32,7 @@ export default async function AdminLayout({
   }
 
   const user = await sanityClient.fetch<{ role: string } | null>(
-    `*[_type == "authorizedUser" && username == $login && active == true][0]{role}`,
+    `*[_type == "authorizedUser" && lower(username) == lower($login) && active == true][0]{role}`,
     { login },
   );
 

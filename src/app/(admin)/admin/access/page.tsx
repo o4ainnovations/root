@@ -10,7 +10,7 @@ export default async function AccessPage() {
   if (!login) redirect("/");
 
   const user = await sanityClient.fetch<{ role: string } | null>(
-    `*[_type == "authorizedUser" && username == $login && active == true][0]{role}`,
+    `*[_type == "authorizedUser" && lower(username) == lower($login) && active == true][0]{role}`,
     { login },
   );
   if (!user || user.role !== "admin") redirect("/admin");
