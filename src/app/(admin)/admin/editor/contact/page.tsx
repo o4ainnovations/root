@@ -7,42 +7,40 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { updatePage } from "@/lib/actions/page-content";
+import { upsertPage } from "@/lib/actions/page-content";
+import { CONTACT_DEFAULTS } from "@/lib/content/defaults";
 import { Save, ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import type { PageContent } from "@/types";
 
 export default function ContactEditorPage() {
   const router = useRouter();
-  const [page, setPage] = useState<PageContent | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [metaTitle, setMetaTitle] = useState("");
-  const [metaDescription, setMetaDescription] = useState("");
-  const [introText, setIntroText] = useState("");
-  const [generalEmail, setGeneralEmail] = useState("");
-  const [pressEmail, setPressEmail] = useState("");
-  const [investorsEmail, setInvestorsEmail] = useState("");
-  const [partnershipsEmail, setPartnershipsEmail] = useState("");
-  const [officeLocation, setOfficeLocation] = useState("");
+  const [metaTitle, setMetaTitle] = useState(CONTACT_DEFAULTS.metaTitle);
+  const [metaDescription, setMetaDescription] = useState(CONTACT_DEFAULTS.metaDescription);
+  const [introText, setIntroText] = useState(CONTACT_DEFAULTS.introText);
+  const [generalEmail, setGeneralEmail] = useState(CONTACT_DEFAULTS.generalEmail);
+  const [pressEmail, setPressEmail] = useState(CONTACT_DEFAULTS.pressEmail);
+  const [investorsEmail, setInvestorsEmail] = useState(CONTACT_DEFAULTS.investorsEmail);
+  const [partnershipsEmail, setPartnershipsEmail] = useState(CONTACT_DEFAULTS.partnershipsEmail);
+  const [officeLocation, setOfficeLocation] = useState(CONTACT_DEFAULTS.officeLocation);
 
   useEffect(() => {
     sanityClient
-      .fetch<PageContent>(
+      .fetch<{ seo?: { metaTitle?: string; metaDescription?: string }; body?: Record<string, unknown> }>(
         `*[_type == "pageContent" && slug.current == "contact"][0]{_id,seo,body}`
       )
       .then((doc) => {
         if (doc) {
-          setPage(doc);
-          setMetaTitle(doc.seo?.metaTitle || "");
-          setMetaDescription(doc.seo?.metaDescription || "");
+          setMetaTitle(doc.seo?.metaTitle || CONTACT_DEFAULTS.metaTitle);
+          setMetaDescription(doc.seo?.metaDescription || CONTACT_DEFAULTS.metaDescription);
           const b = doc.body as Record<string, unknown> || {};
-          setIntroText((b.introText as string) || "");
-          setGeneralEmail((b.generalEmail as string) || "");
-          setPressEmail((b.pressEmail as string) || "");
-          setInvestorsEmail((b.investorsEmail as string) || "");
-          setPartnershipsEmail((b.partnershipsEmail as string) || "");
-          setOfficeLocation((b.officeLocation as string) || "");
+          setIntroText((b.introText as string) || CONTACT_DEFAULTS.introText);
+          setGeneralEmail((b.generalEmail as string) || CONTACT_DEFAULTS.generalEmail);
+          setPressEmail((b.pressEmail as string) || CONTACT_DEFAULTS.pressEmail);
+          setInvestorsEmail((b.investorsEmail as string) || CONTACT_DEFAULTS.investorsEmail);
+          setPartnershipsEmail((b.partnershipsEmail as string) || CONTACT_DEFAULTS.partnershipsEmail);
+          setOfficeLocation((b.officeLocation as string) || CONTACT_DEFAULTS.officeLocation);
         }
       })
       .catch(() => {})
@@ -50,10 +48,14 @@ export default function ContactEditorPage() {
   }, []);
 
   async function handleSave() {
-    if (!page) return;
     setSaving(true);
     try {
-      await updatePage(page._id, { seo: { metaTitle, metaDescription }, body: { introText, generalEmail, pressEmail, investorsEmail, partnershipsEmail, officeLocation } });
+      await upsertPage({
+        title: "Contact",
+        slug: "contact",
+        seo: { metaTitle, metaDescription },
+        body: { introText, generalEmail, pressEmail, investorsEmail, partnershipsEmail, officeLocation },
+      });
       toast.success("Contact page updated.");
       router.refresh();
     } catch {

@@ -7,47 +7,45 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { updatePage } from "@/lib/actions/page-content";
+import { upsertPage } from "@/lib/actions/page-content";
+import { HOME_DEFAULTS } from "@/lib/content/defaults";
 import { Save, ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import type { PageContent } from "@/types";
 
 export default function HomeEditorPage() {
   const router = useRouter();
-  const [page, setPage] = useState<PageContent | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  const [metaTitle, setMetaTitle] = useState("");
-  const [metaDescription, setMetaDescription] = useState("");
-  const [companyName, setCompanyName] = useState("");
-  const [tagline, setTagline] = useState("");
-  const [portfolioLabel, setPortfolioLabel] = useState("");
-  const [aboutLabel, setAboutLabel] = useState("");
-  const [investorsLabel, setInvestorsLabel] = useState("");
-  const [newsLabel, setNewsLabel] = useState("");
-  const [careersLabel, setCareersLabel] = useState("");
-  const [contactLabel, setContactLabel] = useState("");
+  const [metaTitle, setMetaTitle] = useState(HOME_DEFAULTS.metaTitle);
+  const [metaDescription, setMetaDescription] = useState(HOME_DEFAULTS.metaDescription);
+  const [companyName, setCompanyName] = useState(HOME_DEFAULTS.companyName);
+  const [tagline, setTagline] = useState(HOME_DEFAULTS.tagline);
+  const [portfolioLabel, setPortfolioLabel] = useState(HOME_DEFAULTS.portfolioLabel);
+  const [aboutLabel, setAboutLabel] = useState(HOME_DEFAULTS.aboutLabel);
+  const [investorsLabel, setInvestorsLabel] = useState(HOME_DEFAULTS.investorsLabel);
+  const [newsLabel, setNewsLabel] = useState(HOME_DEFAULTS.newsLabel);
+  const [careersLabel, setCareersLabel] = useState(HOME_DEFAULTS.careersLabel);
+  const [contactLabel, setContactLabel] = useState(HOME_DEFAULTS.contactLabel);
 
   useEffect(() => {
     async function load() {
-      const doc = await sanityClient.fetch<PageContent>(
+      const doc = await sanityClient.fetch<{ seo?: { metaTitle?: string; metaDescription?: string }; body?: Record<string, string> }>(
         `*[_type == "pageContent" && slug.current == "home"][0]{_id,title,seo,body}`
       );
       if (doc) {
-        setPage(doc);
-        setMetaTitle(doc.seo?.metaTitle || "");
-        setMetaDescription(doc.seo?.metaDescription || "");
+        setMetaTitle(doc.seo?.metaTitle || HOME_DEFAULTS.metaTitle);
+        setMetaDescription(doc.seo?.metaDescription || HOME_DEFAULTS.metaDescription);
         const b = doc.body as Record<string, string> | undefined;
         if (b) {
-          setCompanyName(b.companyName || "");
-          setTagline(b.tagline || "");
-          setPortfolioLabel(b.portfolioLabel || "");
-          setAboutLabel(b.aboutLabel || "");
-          setInvestorsLabel(b.investorsLabel || "");
-          setNewsLabel(b.newsLabel || "");
-          setCareersLabel(b.careersLabel || "");
-          setContactLabel(b.contactLabel || "");
+          setCompanyName(b.companyName || HOME_DEFAULTS.companyName);
+          setTagline(b.tagline || HOME_DEFAULTS.tagline);
+          setPortfolioLabel(b.portfolioLabel || HOME_DEFAULTS.portfolioLabel);
+          setAboutLabel(b.aboutLabel || HOME_DEFAULTS.aboutLabel);
+          setInvestorsLabel(b.investorsLabel || HOME_DEFAULTS.investorsLabel);
+          setNewsLabel(b.newsLabel || HOME_DEFAULTS.newsLabel);
+          setCareersLabel(b.careersLabel || HOME_DEFAULTS.careersLabel);
+          setContactLabel(b.contactLabel || HOME_DEFAULTS.contactLabel);
         }
       }
       setLoading(false);
@@ -56,10 +54,11 @@ export default function HomeEditorPage() {
   }, []);
 
   async function handleSave() {
-    if (!page) return;
     setSaving(true);
     try {
-      await updatePage(page._id, {
+      await upsertPage({
+        title: "Home",
+        slug: "home",
         seo: { metaTitle, metaDescription },
         body: {
           companyName,

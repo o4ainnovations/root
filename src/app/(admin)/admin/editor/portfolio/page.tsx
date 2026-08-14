@@ -7,7 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { updatePage } from "@/lib/actions/page-content";
+import { upsertPage } from "@/lib/actions/page-content";
+import { PORTFOLIO_DEFAULTS } from "@/lib/content/defaults";
 import {
   createSubsidiary,
   updateSubsidiary,
@@ -15,7 +16,7 @@ import {
 } from "@/lib/actions/subsidiary";
 import { Save, ArrowLeft, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
-import type { PageContent, Subsidiary } from "@/types";
+import type { Subsidiary } from "@/types";
 
 function slugify(text: string): string {
   return text
@@ -26,14 +27,13 @@ function slugify(text: string): string {
 
 export default function PortfolioEditorPage() {
   const router = useRouter();
-  const [page, setPage] = useState<PageContent | null>(null);
   const [subsidiaries, setSubsidiaries] = useState<Subsidiary[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  const [metaTitle, setMetaTitle] = useState("");
-  const [metaDescription, setMetaDescription] = useState("");
-  const [introText, setIntroText] = useState("");
+  const [metaTitle, setMetaTitle] = useState(PORTFOLIO_DEFAULTS.metaTitle);
+  const [metaDescription, setMetaDescription] = useState(PORTFOLIO_DEFAULTS.metaDescription);
+  const [introText, setIntroText] = useState(PORTFOLIO_DEFAULTS.introText);
 
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingSub, setEditingSub] = useState<Subsidiary | null>(null);
@@ -49,15 +49,14 @@ export default function PortfolioEditorPage() {
 
   useEffect(() => {
     async function load() {
-      const doc = await sanityClient.fetch<PageContent>(
+      const doc = await sanityClient.fetch<{ seo?: { metaTitle?: string; metaDescription?: string }; body?: Record<string, unknown> }>(
         `*[_type == "pageContent" && slug.current == "portfolio"][0]{_id,title,seo,body}`
       );
       if (doc) {
-        setPage(doc);
-        setMetaTitle(doc.seo?.metaTitle || "");
-        setMetaDescription(doc.seo?.metaDescription || "");
+        setMetaTitle(doc.seo?.metaTitle || PORTFOLIO_DEFAULTS.metaTitle);
+        setMetaDescription(doc.seo?.metaDescription || PORTFOLIO_DEFAULTS.metaDescription);
         const b = doc.body as Record<string, unknown> || {};
-        setIntroText((b.introText as string) || "");
+        setIntroText((b.introText as string) || PORTFOLIO_DEFAULTS.introText);
       }
       const subs = await sanityClient.fetch<
         { _id: string; name: string; slug: string; description: string; industry: string; url?: string; status: string; order: number }[]
@@ -71,10 +70,11 @@ export default function PortfolioEditorPage() {
   }, []);
 
   async function handleSave() {
-    if (!page) return;
     setSaving(true);
     try {
-      await updatePage(page._id, {
+      await upsertPage({
+        title: "Portfolio",
+        slug: "portfolio",
         seo: { metaTitle, metaDescription },
         body: { introText },
       });

@@ -7,10 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { updatePage } from "@/lib/actions/page-content";
+import { upsertPage } from "@/lib/actions/page-content";
+import { LEGAL_DEFAULTS } from "@/lib/content/defaults";
 import { Save, ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import type { PageContent } from "@/types";
 
 const sections = [
   { key: "privacy", label: "Privacy Policy" },
@@ -22,24 +22,22 @@ const sections = [
 
 export default function LegalEditorPage() {
   const router = useRouter();
-  const [page, setPage] = useState<PageContent | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [metaTitle, setMetaTitle] = useState("");
-  const [metaDescription, setMetaDescription] = useState("");
-  const [noindex, setNoindex] = useState(false);
+  const [metaTitle, setMetaTitle] = useState(LEGAL_DEFAULTS.metaTitle);
+  const [metaDescription, setMetaDescription] = useState(LEGAL_DEFAULTS.metaDescription);
+  const [noindex, setNoindex] = useState(LEGAL_DEFAULTS.noindex);
 
   useEffect(() => {
     sanityClient
-      .fetch<PageContent>(
+      .fetch<{ seo?: { metaTitle?: string; metaDescription?: string; noindex?: boolean } }>(
         `*[_type == "pageContent" && slug.current == "legal"][0]{_id,seo}`
       )
       .then((doc) => {
         if (doc) {
-          setPage(doc);
-          setMetaTitle(doc.seo?.metaTitle || "");
-          setMetaDescription(doc.seo?.metaDescription || "");
-          setNoindex(doc.seo?.noindex || false);
+          setMetaTitle(doc.seo?.metaTitle || LEGAL_DEFAULTS.metaTitle);
+          setMetaDescription(doc.seo?.metaDescription || LEGAL_DEFAULTS.metaDescription);
+          setNoindex(doc.seo?.noindex ?? LEGAL_DEFAULTS.noindex);
         }
       })
       .catch(() => {})
@@ -47,10 +45,13 @@ export default function LegalEditorPage() {
   }, []);
 
   async function handleSave() {
-    if (!page) return;
     setSaving(true);
     try {
-      await updatePage(page._id, { seo: { metaTitle, metaDescription, noindex } });
+      await upsertPage({
+        title: "Legal & Governance",
+        slug: "legal",
+        seo: { metaTitle, metaDescription, noindex },
+      });
       toast.success("Legal page updated.");
       router.refresh();
     } catch {

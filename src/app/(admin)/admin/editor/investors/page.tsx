@@ -8,50 +8,51 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { updatePage } from "@/lib/actions/page-content";
+import { upsertPage } from "@/lib/actions/page-content";
+import { INVESTORS_DEFAULTS } from "@/lib/content/defaults";
 import { createDownload, deleteDownload } from "@/lib/actions/download";
 import { Save, ArrowLeft, Upload, Trash2 } from "lucide-react";
 import Link from "next/link";
-import type { PageContent, Download as DownloadType } from "@/types";
+import type { Download as DownloadType } from "@/types";
 
 export default function InvestorsEditorPage() {
   const router = useRouter();
-  const [page, setPage] = useState<PageContent | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  const [metaTitle, setMetaTitle] = useState("");
-  const [metaDescription, setMetaDescription] = useState("");
-  const [ownershipHeading, setOwnershipHeading] = useState("");
-  const [ownershipBody, setOwnershipBody] = useState("");
-  const [governanceHeading, setGovernanceHeading] = useState("");
-  const [governanceBody, setGovernanceBody] = useState("");
-  const [financialHeading, setFinancialHeading] = useState("");
-  const [financialBody, setFinancialBody] = useState("");
-  const [contactEmail, setContactEmail] = useState("");
-  const [contactResponse, setContactResponse] = useState("");
+  const [metaTitle, setMetaTitle] = useState(INVESTORS_DEFAULTS.metaTitle);
+  const [metaDescription, setMetaDescription] = useState(INVESTORS_DEFAULTS.metaDescription);
+  const [introText, setIntroText] = useState(INVESTORS_DEFAULTS.introText);
+  const [ownershipHeading, setOwnershipHeading] = useState(INVESTORS_DEFAULTS.ownershipHeading);
+  const [ownershipBody, setOwnershipBody] = useState(INVESTORS_DEFAULTS.ownershipBody);
+  const [governanceHeading, setGovernanceHeading] = useState(INVESTORS_DEFAULTS.governanceHeading);
+  const [governanceBody, setGovernanceBody] = useState(INVESTORS_DEFAULTS.governanceBody);
+  const [financialHeading, setFinancialHeading] = useState(INVESTORS_DEFAULTS.financialHeading);
+  const [financialBody, setFinancialBody] = useState(INVESTORS_DEFAULTS.financialBody);
+  const [investorEmail, setInvestorEmail] = useState(INVESTORS_DEFAULTS.investorEmail);
+  const [investorResponseTime, setInvestorResponseTime] = useState(INVESTORS_DEFAULTS.investorResponseTime);
   const [downloads, setDownloads] = useState<DownloadType[]>([]);
   const [downloadTitle, setDownloadTitle] = useState("");
   const [downloadCategory, setDownloadCategory] = useState<"investor" | "esg" | "governance">("investor");
 
   useEffect(() => {
     async function load() {
-      const doc = await sanityClient.fetch<PageContent>(
+      const doc = await sanityClient.fetch<{ seo?: { metaTitle?: string; metaDescription?: string }; body?: Record<string, unknown> }>(
         `*[_type == "pageContent" && slug.current == "investors"][0]{_id,title,seo,body}`
       );
       if (doc) {
-        setPage(doc);
-        setMetaTitle(doc.seo?.metaTitle || "");
-        setMetaDescription(doc.seo?.metaDescription || "");
+        setMetaTitle(doc.seo?.metaTitle || INVESTORS_DEFAULTS.metaTitle);
+        setMetaDescription(doc.seo?.metaDescription || INVESTORS_DEFAULTS.metaDescription);
         const b = doc.body as Record<string, unknown> || {};
-        setOwnershipHeading((b.ownershipHeading as string) || "");
-        setOwnershipBody((b.ownershipBody as string) || "");
-        setGovernanceHeading((b.governanceHeading as string) || "");
-        setGovernanceBody((b.governanceBody as string) || "");
-        setFinancialHeading((b.financialHeading as string) || "");
-        setFinancialBody((b.financialBody as string) || "");
-        setContactEmail((b.contactEmail as string) || "");
-        setContactResponse((b.contactResponse as string) || "");
+        setIntroText((b.introText as string) || INVESTORS_DEFAULTS.introText);
+        setOwnershipHeading((b.ownershipHeading as string) || INVESTORS_DEFAULTS.ownershipHeading);
+        setOwnershipBody((b.ownershipBody as string) || INVESTORS_DEFAULTS.ownershipBody);
+        setGovernanceHeading((b.governanceHeading as string) || INVESTORS_DEFAULTS.governanceHeading);
+        setGovernanceBody((b.governanceBody as string) || INVESTORS_DEFAULTS.governanceBody);
+        setFinancialHeading((b.financialHeading as string) || INVESTORS_DEFAULTS.financialHeading);
+        setFinancialBody((b.financialBody as string) || INVESTORS_DEFAULTS.financialBody);
+        setInvestorEmail((b.investorEmail as string) || (b.contactEmail as string) || INVESTORS_DEFAULTS.investorEmail);
+        setInvestorResponseTime((b.investorResponseTime as string) || (b.contactResponse as string) || INVESTORS_DEFAULTS.investorResponseTime);
       }
       const dl = await sanityClient.fetch<DownloadType[]>(
         `*[_type == "download"] | order(publishDate desc) {_id,title,category,publishDate,file{asset->{url}}}`
@@ -63,12 +64,13 @@ export default function InvestorsEditorPage() {
   }, []);
 
   async function handleSave() {
-    if (!page) return;
     setSaving(true);
     try {
-      await updatePage(page._id, {
+      await upsertPage({
+        title: "Investor Relations",
+        slug: "investors",
         seo: { metaTitle, metaDescription },
-        body: { ownershipHeading, ownershipBody, governanceHeading, governanceBody, financialHeading, financialBody, contactEmail, contactResponse },
+        body: { introText, ownershipHeading, ownershipBody, governanceHeading, governanceBody, financialHeading, financialBody, investorEmail, investorResponseTime },
       });
       toast.success("Investors page updated.");
       router.refresh();
@@ -162,6 +164,19 @@ export default function InvestorsEditorPage() {
               className="rounded-none border-border bg-background font-serif resize-none"
             />
           </div>
+        </section>
+
+        {/* Intro */}
+        <section className="space-y-4 border-t border-hairline pt-8">
+          <h2 className="font-heading text-xl font-bold text-ink">
+            Intro Text
+          </h2>
+          <Textarea
+            value={introText}
+            onChange={(e) => setIntroText(e.target.value)}
+            rows={2}
+            className="rounded-none border-border bg-background font-serif resize-none"
+          />
         </section>
 
         {/* Ownership */}
@@ -304,8 +319,8 @@ export default function InvestorsEditorPage() {
           <div>
             <label className="label-uppercase block mb-2">Contact Email</label>
             <Input
-              value={contactEmail}
-              onChange={(e) => setContactEmail(e.target.value)}
+              value={investorEmail}
+              onChange={(e) => setInvestorEmail(e.target.value)}
               placeholder={COMPANY.contact.investors}
               className="rounded-none border-border bg-background font-serif"
             />
@@ -313,8 +328,8 @@ export default function InvestorsEditorPage() {
           <div>
             <label className="label-uppercase block mb-2">Response Time</label>
             <Input
-              value={contactResponse}
-              onChange={(e) => setContactResponse(e.target.value)}
+              value={investorResponseTime}
+              onChange={(e) => setInvestorResponseTime(e.target.value)}
               placeholder="2 business days"
               className="rounded-none border-border bg-background font-serif"
             />

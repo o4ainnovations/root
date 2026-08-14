@@ -70,8 +70,8 @@ export function buildMetadata(config: PageSeoConfig): Metadata {
 
     icons: {
       icon: [
+        { url: "/icon.svg", type: "image/svg+xml" },
         { url: "/icon.png", type: "image/png" },
-        { url: "/favicon.ico", sizes: "32x32" },
       ],
       apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
       other: [{ rel: "manifest", url: "/manifest.webmanifest" }],

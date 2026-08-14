@@ -7,11 +7,12 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { updatePage } from "@/lib/actions/page-content";
+import { upsertPage } from "@/lib/actions/page-content";
+import { CAREERS_DEFAULTS } from "@/lib/content/defaults";
 import { createJob, updateJob, deleteJob } from "@/lib/actions/job";
 import { Save, ArrowLeft, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
-import type { PageContent, Job } from "@/types";
+import type { Job } from "@/types";
 
 function generateSlug(title: string): string {
   return title
@@ -26,23 +27,23 @@ const EMPLOYMENT_TYPES = ["full-time", "part-time", "contract", "internship"] as
 
 export default function CareersEditorPage() {
   const router = useRouter();
-  const [page, setPage] = useState<PageContent | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  const [metaTitle, setMetaTitle] = useState("");
-  const [metaDescription, setMetaDescription] = useState("");
-  const [whyO4AText, setWhyO4AText] = useState("");
-  const [value1Title, setValue1Title] = useState("");
-  const [value1Desc, setValue1Desc] = useState("");
-  const [value2Title, setValue2Title] = useState("");
-  const [value2Desc, setValue2Desc] = useState("");
-  const [value3Title, setValue3Title] = useState("");
-  const [value3Desc, setValue3Desc] = useState("");
-  const [value4Title, setValue4Title] = useState("");
-  const [value4Desc, setValue4Desc] = useState("");
-  const [hiringTitle, setHiringTitle] = useState("");
-  const [hiringSteps, setHiringSteps] = useState("");
+  const [metaTitle, setMetaTitle] = useState(CAREERS_DEFAULTS.metaTitle);
+  const [metaDescription, setMetaDescription] = useState(CAREERS_DEFAULTS.metaDescription);
+  const [introText, setIntroText] = useState(CAREERS_DEFAULTS.introText);
+  const [whyO4AText, setWhyO4AText] = useState(CAREERS_DEFAULTS.whyO4AText);
+  const [value1Title, setValue1Title] = useState(CAREERS_DEFAULTS.value1Title);
+  const [value1Desc, setValue1Desc] = useState(CAREERS_DEFAULTS.value1Desc);
+  const [value2Title, setValue2Title] = useState(CAREERS_DEFAULTS.value2Title);
+  const [value2Desc, setValue2Desc] = useState(CAREERS_DEFAULTS.value2Desc);
+  const [value3Title, setValue3Title] = useState(CAREERS_DEFAULTS.value3Title);
+  const [value3Desc, setValue3Desc] = useState(CAREERS_DEFAULTS.value3Desc);
+  const [value4Title, setValue4Title] = useState(CAREERS_DEFAULTS.value4Title);
+  const [value4Desc, setValue4Desc] = useState(CAREERS_DEFAULTS.value4Desc);
+  const [hiringTitle, setHiringTitle] = useState(CAREERS_DEFAULTS.hiringTitle);
+  const [hiringSteps, setHiringSteps] = useState(CAREERS_DEFAULTS.hiringSteps);
 
   const [jobs, setJobs] = useState<Job[]>([]);
   const [jobsLoading, setJobsLoading] = useState(true);
@@ -62,26 +63,26 @@ export default function CareersEditorPage() {
 
   useEffect(() => {
     async function load() {
-      const doc = await sanityClient.fetch<PageContent>(
+      const doc = await sanityClient.fetch<{ seo?: { metaTitle?: string; metaDescription?: string }; body?: Record<string, unknown> }>(
         `*[_type == "pageContent" && slug.current == "careers"][0]{_id,title,seo,body}`
       );
       if (doc) {
-        setPage(doc);
-        setMetaTitle(doc.seo?.metaTitle || "");
-        setMetaDescription(doc.seo?.metaDescription || "");
+        setMetaTitle(doc.seo?.metaTitle || CAREERS_DEFAULTS.metaTitle);
+        setMetaDescription(doc.seo?.metaDescription || CAREERS_DEFAULTS.metaDescription);
         const b = doc.body as Record<string, unknown> | undefined;
         if (b) {
-          setWhyO4AText((b.whyO4AText as string) || "");
-          setValue1Title((b.value1Title as string) || "");
-          setValue1Desc((b.value1Desc as string) || "");
-          setValue2Title((b.value2Title as string) || "");
-          setValue2Desc((b.value2Desc as string) || "");
-          setValue3Title((b.value3Title as string) || "");
-          setValue3Desc((b.value3Desc as string) || "");
-          setValue4Title((b.value4Title as string) || "");
-          setValue4Desc((b.value4Desc as string) || "");
-          setHiringTitle((b.hiringTitle as string) || "");
-          setHiringSteps((b.hiringSteps as string) || "");
+          setIntroText((b.introText as string) || CAREERS_DEFAULTS.introText);
+          setWhyO4AText((b.whyO4AText as string) || CAREERS_DEFAULTS.whyO4AText);
+          setValue1Title((b.value1Title as string) || CAREERS_DEFAULTS.value1Title);
+          setValue1Desc((b.value1Desc as string) || CAREERS_DEFAULTS.value1Desc);
+          setValue2Title((b.value2Title as string) || CAREERS_DEFAULTS.value2Title);
+          setValue2Desc((b.value2Desc as string) || CAREERS_DEFAULTS.value2Desc);
+          setValue3Title((b.value3Title as string) || CAREERS_DEFAULTS.value3Title);
+          setValue3Desc((b.value3Desc as string) || CAREERS_DEFAULTS.value3Desc);
+          setValue4Title((b.value4Title as string) || CAREERS_DEFAULTS.value4Title);
+          setValue4Desc((b.value4Desc as string) || CAREERS_DEFAULTS.value4Desc);
+          setHiringTitle((b.hiringTitle as string) || CAREERS_DEFAULTS.hiringTitle);
+          setHiringSteps((b.hiringSteps as string) || CAREERS_DEFAULTS.hiringSteps);
         }
       }
     }
@@ -126,12 +127,14 @@ export default function CareersEditorPage() {
   }
 
   async function handleSavePage() {
-    if (!page) return;
     setSaving(true);
     try {
-      await updatePage(page._id, {
+      await upsertPage({
+        title: "Careers",
+        slug: "careers",
         seo: { metaTitle, metaDescription },
         body: {
+          introText,
           whyO4AText,
           value1Title,
           value1Desc,
@@ -272,6 +275,18 @@ export default function CareersEditorPage() {
               className="rounded-none border-border bg-background font-serif resize-none"
             />
           </div>
+        </section>
+
+        <section className="space-y-4 border-t border-hairline pt-8">
+          <h2 className="font-heading text-xl font-bold text-ink">
+            Intro Text
+          </h2>
+          <Textarea
+            value={introText}
+            onChange={(e) => setIntroText(e.target.value)}
+            rows={2}
+            className="rounded-none border-border bg-background font-serif resize-none"
+          />
         </section>
 
         <section className="space-y-4 border-t border-hairline pt-8">

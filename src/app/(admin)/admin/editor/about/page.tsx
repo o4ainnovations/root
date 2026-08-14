@@ -7,7 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { updatePage } from "@/lib/actions/page-content";
+import { upsertPage } from "@/lib/actions/page-content";
+import { ABOUT_DEFAULTS } from "@/lib/content/defaults";
 import {
   createTeamMember,
   updateTeamMember,
@@ -15,24 +16,23 @@ import {
 } from "@/lib/actions/team";
 import { Save, ArrowLeft, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
-import type { PageContent, TeamMember } from "@/types";
+import type { TeamMember } from "@/types";
 
 export default function AboutEditorPage() {
   const router = useRouter();
-  const [page, setPage] = useState<PageContent | null>(null);
   const [team, setTeam] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  const [metaTitle, setMetaTitle] = useState("");
-  const [metaDescription, setMetaDescription] = useState("");
-  const [missionText, setMissionText] = useState("");
-  const [timelineYear, setTimelineYear] = useState("");
-  const [timelineTitle, setTimelineTitle] = useState("");
-  const [timelineDesc, setTimelineDesc] = useState("");
-  const [foundedYear, setFoundedYear] = useState("");
-  const [headquarters, setHeadquarters] = useState("");
-  const [structure, setStructure] = useState("");
+  const [metaTitle, setMetaTitle] = useState(ABOUT_DEFAULTS.metaTitle);
+  const [metaDescription, setMetaDescription] = useState(ABOUT_DEFAULTS.metaDescription);
+  const [missionText, setMissionText] = useState(ABOUT_DEFAULTS.missionText);
+  const [timelineYear, setTimelineYear] = useState(ABOUT_DEFAULTS.timelineYear);
+  const [timelineTitle, setTimelineTitle] = useState(ABOUT_DEFAULTS.timelineTitle);
+  const [timelineDesc, setTimelineDesc] = useState(ABOUT_DEFAULTS.timelineDesc);
+  const [foundedYear, setFoundedYear] = useState(ABOUT_DEFAULTS.foundedYear);
+  const [headquarters, setHeadquarters] = useState(ABOUT_DEFAULTS.headquarters);
+  const [structure, setStructure] = useState(ABOUT_DEFAULTS.structure);
 
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingMember, setEditingMember] = useState<TeamMember | null>(null);
@@ -46,21 +46,20 @@ export default function AboutEditorPage() {
 
   useEffect(() => {
     async function load() {
-      const doc = await sanityClient.fetch<PageContent>(
+      const doc = await sanityClient.fetch<{ seo?: { metaTitle?: string; metaDescription?: string }; body?: Record<string, unknown> }>(
         `*[_type == "pageContent" && slug.current == "about"][0]{_id,title,seo,body}`
       );
       if (doc) {
-        setPage(doc);
-        setMetaTitle(doc.seo?.metaTitle || "");
-        setMetaDescription(doc.seo?.metaDescription || "");
+        setMetaTitle(doc.seo?.metaTitle || ABOUT_DEFAULTS.metaTitle);
+        setMetaDescription(doc.seo?.metaDescription || ABOUT_DEFAULTS.metaDescription);
         const b = doc.body as Record<string, unknown> || {};
-        setMissionText((b.missionText as string) || "");
-        setTimelineYear((b.timelineYear as string) || "");
-        setTimelineTitle((b.timelineTitle as string) || "");
-        setTimelineDesc((b.timelineDesc as string) || "");
-        setFoundedYear((b.foundedYear as string) || "");
-        setHeadquarters((b.headquarters as string) || "");
-        setStructure((b.structure as string) || "");
+        setMissionText((b.missionText as string) || ABOUT_DEFAULTS.missionText);
+        setTimelineYear((b.timelineYear as string) || ABOUT_DEFAULTS.timelineYear);
+        setTimelineTitle((b.timelineTitle as string) || ABOUT_DEFAULTS.timelineTitle);
+        setTimelineDesc((b.timelineDesc as string) || ABOUT_DEFAULTS.timelineDesc);
+        setFoundedYear((b.foundedYear as string) || ABOUT_DEFAULTS.foundedYear);
+        setHeadquarters((b.headquarters as string) || ABOUT_DEFAULTS.headquarters);
+        setStructure((b.structure as string) || ABOUT_DEFAULTS.structure);
       }
       const members = await sanityClient.fetch<TeamMember[]>(
         `*[_type == "teamMember"] | order(order asc) {_id,name,title,bio,"type": type,"order": order}`
@@ -72,10 +71,11 @@ export default function AboutEditorPage() {
   }, []);
 
   async function handleSave() {
-    if (!page) return;
     setSaving(true);
     try {
-      await updatePage(page._id, {
+      await upsertPage({
+        title: "About",
+        slug: "about",
         seo: { metaTitle, metaDescription },
         body: { missionText, timelineYear, timelineTitle, timelineDesc, foundedYear, headquarters, structure },
       });

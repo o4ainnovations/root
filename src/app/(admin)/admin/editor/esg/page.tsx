@@ -7,39 +7,37 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { updatePage } from "@/lib/actions/page-content";
+import { upsertPage } from "@/lib/actions/page-content";
+import { ESG_DEFAULTS } from "@/lib/content/defaults";
 import { Save, ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import type { PageContent } from "@/types";
 
 export default function EsgEditorPage() {
   const router = useRouter();
-  const [page, setPage] = useState<PageContent | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  const [metaTitle, setMetaTitle] = useState("");
-  const [metaDescription, setMetaDescription] = useState("");
-  const [commitmentText, setCommitmentText] = useState("");
-  const [envText, setEnvText] = useState("");
-  const [socialText, setSocialText] = useState("");
-  const [govText, setGovText] = useState("");
+  const [metaTitle, setMetaTitle] = useState(ESG_DEFAULTS.metaTitle);
+  const [metaDescription, setMetaDescription] = useState(ESG_DEFAULTS.metaDescription);
+  const [commitmentText, setCommitmentText] = useState(ESG_DEFAULTS.commitmentText);
+  const [envText, setEnvText] = useState(ESG_DEFAULTS.envText);
+  const [socialText, setSocialText] = useState(ESG_DEFAULTS.socialText);
+  const [govText, setGovText] = useState(ESG_DEFAULTS.govText);
 
   useEffect(() => {
     async function load() {
-      const doc = await sanityClient.fetch<PageContent>(
+      const doc = await sanityClient.fetch<{ seo?: { metaTitle?: string; metaDescription?: string }; body?: Record<string, string> }>(
         `*[_type == "pageContent" && slug.current == "esg"][0]{_id,title,seo,body}`
       );
       if (doc) {
-        setPage(doc);
-        setMetaTitle(doc.seo?.metaTitle || "");
-        setMetaDescription(doc.seo?.metaDescription || "");
+        setMetaTitle(doc.seo?.metaTitle || ESG_DEFAULTS.metaTitle);
+        setMetaDescription(doc.seo?.metaDescription || ESG_DEFAULTS.metaDescription);
         const b = doc.body as Record<string, string> | undefined;
         if (b) {
-          setCommitmentText(b.commitmentText || "");
-          setEnvText(b.envText || "");
-          setSocialText(b.socialText || "");
-          setGovText(b.govText || "");
+          setCommitmentText(b.commitmentText || ESG_DEFAULTS.commitmentText);
+          setEnvText(b.envText || ESG_DEFAULTS.envText);
+          setSocialText(b.socialText || ESG_DEFAULTS.socialText);
+          setGovText(b.govText || ESG_DEFAULTS.govText);
         }
       }
       setLoading(false);
@@ -48,10 +46,11 @@ export default function EsgEditorPage() {
   }, []);
 
   async function handleSave() {
-    if (!page) return;
     setSaving(true);
     try {
-      await updatePage(page._id, {
+      await upsertPage({
+        title: "ESG & Sustainability",
+        slug: "esg",
         seo: { metaTitle, metaDescription },
         body: {
           commitmentText,

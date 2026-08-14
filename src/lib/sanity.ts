@@ -4,11 +4,9 @@ import { createImageUrlBuilder } from "@sanity/image-url";
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!;
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || "production";
 // Token for write operations via server actions.
-// IMPORTANT: Must have Editor/Developer role write permissions in Sanity dashboard.
-// If using a read-only token, all admin create/update/delete will fail at runtime.
-// Consider creating a dedicated SANITY_API_WRITE_TOKEN with write permissions
-// and using it here instead of reusing the read token.
-const token = process.env.SANITY_API_READ_TOKEN;
+// Must have Editor/Developer role (read+write) permissions in Sanity dashboard.
+const writeToken =
+  process.env.SANITY_API_WRITE_TOKEN || process.env.SANITY_API_READ_TOKEN;
 const apiVersion = "2024-01-01";
 
 export const sanityClient = createClient({
@@ -24,7 +22,7 @@ export const sanityWriteClient = createClient({
   dataset,
   apiVersion,
   useCdn: false,
-  token,
+  token: writeToken,
   stega: { enabled: false },
 });
 

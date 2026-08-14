@@ -8,7 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { updatePage } from "@/lib/actions/page-content";
+import { upsertPage } from "@/lib/actions/page-content";
+import { NEWS_DEFAULTS } from "@/lib/content/defaults";
 import {
   createPressRelease,
   updatePressRelease,
@@ -17,7 +18,7 @@ import {
 import { Save, ArrowLeft, Plus, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import type { PageContent, PressRelease } from "@/types";
+import type { PressRelease } from "@/types";
 
 function slugify(text: string): string {
   return text
@@ -34,16 +35,15 @@ const categoryColors: Record<PressRelease["category"], string> = {
 
 export default function NewsEditorPage() {
   const router = useRouter();
-  const [page, setPage] = useState<PageContent | null>(null);
   const [releases, setReleases] = useState<PressRelease[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  const [metaTitle, setMetaTitle] = useState("");
-  const [metaDescription, setMetaDescription] = useState("");
-  const [introText, setIntroText] = useState("");
-  const [mediaContactEmail, setMediaContactEmail] = useState("");
-  const [mediaKitMessage, setMediaKitMessage] = useState("");
+  const [metaTitle, setMetaTitle] = useState(NEWS_DEFAULTS.metaTitle);
+  const [metaDescription, setMetaDescription] = useState(NEWS_DEFAULTS.metaDescription);
+  const [introText, setIntroText] = useState(NEWS_DEFAULTS.introText);
+  const [mediaEmail, setMediaEmail] = useState(NEWS_DEFAULTS.mediaEmail);
+  const [mediaKitText, setMediaKitText] = useState(NEWS_DEFAULTS.mediaKitText);
 
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingRelease, setEditingRelease] = useState<PressRelease | null>(
@@ -59,17 +59,16 @@ export default function NewsEditorPage() {
 
   useEffect(() => {
     async function load() {
-      const doc = await sanityClient.fetch<PageContent>(
+      const doc = await sanityClient.fetch<{ seo?: { metaTitle?: string; metaDescription?: string }; body?: Record<string, unknown> }>(
         `*[_type == "pageContent" && slug.current == "news"][0]{_id,title,seo,body}`
       );
       if (doc) {
-        setPage(doc);
-        setMetaTitle(doc.seo?.metaTitle || "");
-        setMetaDescription(doc.seo?.metaDescription || "");
+        setMetaTitle(doc.seo?.metaTitle || NEWS_DEFAULTS.metaTitle);
+        setMetaDescription(doc.seo?.metaDescription || NEWS_DEFAULTS.metaDescription);
         const b = doc.body as Record<string, unknown> || {};
-        setIntroText((b.introText as string) || "");
-        setMediaContactEmail((b.mediaContactEmail as string) || "");
-        setMediaKitMessage((b.mediaKitMessage as string) || "");
+        setIntroText((b.introText as string) || NEWS_DEFAULTS.introText);
+        setMediaEmail((b.mediaEmail as string) || (b.mediaContactEmail as string) || NEWS_DEFAULTS.mediaEmail);
+        setMediaKitText((b.mediaKitText as string) || (b.mediaKitMessage as string) || NEWS_DEFAULTS.mediaKitText);
       }
       const press = await sanityClient.fetch<
         { _id: string; title: string; slug: string; date: string; category: string; featured: boolean }[]
@@ -83,12 +82,13 @@ export default function NewsEditorPage() {
   }, []);
 
   async function handleSave() {
-    if (!page) return;
     setSaving(true);
     try {
-      await updatePage(page._id, {
+      await upsertPage({
+        title: "Newsroom",
+        slug: "news",
         seo: { metaTitle, metaDescription },
-        body: { introText, mediaContactEmail, mediaKitMessage },
+        body: { introText, mediaEmail, mediaKitText },
       });
       toast.success("News page updated.");
       router.refresh();
@@ -278,8 +278,8 @@ export default function NewsEditorPage() {
                 Media Contact Email
               </label>
               <Input
-                value={mediaContactEmail}
-                onChange={(e) => setMediaContactEmail(e.target.value)}
+                value={mediaEmail}
+                onChange={(e) => setMediaEmail(e.target.value)}
                 placeholder={COMPANY.contact.press}
                 className="rounded-none border-border bg-background font-serif"
               />
@@ -288,11 +288,12 @@ export default function NewsEditorPage() {
               <label className="label-uppercase block mb-2">
                 Media Kit Message
               </label>
-              <Input
-                value={mediaKitMessage}
-                onChange={(e) => setMediaKitMessage(e.target.value)}
-                placeholder="Download our media kit for brand assets..."
-                className="rounded-none border-border bg-background font-serif"
+              <Textarea
+                value={mediaKitText}
+                onChange={(e) => setMediaKitText(e.target.value)}
+                placeholder="Brand assets, executive photos, and boilerplate text are available upon request."
+                rows={2}
+                className="rounded-none border-border bg-background font-serif resize-none"
               />
             </div>
           </div>

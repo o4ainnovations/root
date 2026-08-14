@@ -1,6 +1,6 @@
 "use server";
 
-import { sanityWriteClient } from "@/lib/sanity";
+import { sanityWriteClient, sanityClient } from "@/lib/sanity";
 import { requireAuth } from "@/lib/actions/guard";
 import { revalidateTag } from "next/cache";
 import { createPageSchema, updatePageSchema } from "@/lib/validations/page-content";
@@ -77,5 +77,53 @@ export async function deletePage(id: string) {
     revalidateTag("pageContent", "max");} catch (error) {
     console.error("Failed to delete page:", error);
     throw new Error("Failed to delete page. Please try again.");
+  }
+}
+
+export async function upsertPage(data: {
+  title: string;
+  slug: string;
+  body?: unknown;
+  seo?: {
+    metaTitle?: string;
+    metaDescription?: string;
+    keywords?: string[];
+    noindex?: boolean;
+  };
+}) {
+  const parsed = createPageSchema.safeParse(data);
+  if (!parsed.success) {
+    throw new Error(`Validation failed: ${parsed.error.issues.map((e) => e.message).join(", ")}`);
+  }
+  await requireAuth();
+  const existing = await sanityClient.fetch<{ _id: string } | null>(
+    `*[_type == "pageContent" && slug.current == $slug][0]{_id}`,
+    { slug: data.slug },
+  );
+  try {
+    if (existing?._id) {
+      await sanityWriteClient
+        .patch(existing._id)
+        .set({
+          title: data.title,
+          body: data.body,
+          seo: data.seo,
+          lastUpdated: new Date().toISOString(),
+        })
+        .commit();
+    } else {
+      await sanityWriteClient.create({
+        _type: "pageContent",
+        title: data.title,
+        slug: { _type: "slug", current: data.slug },
+        body: data.body,
+        seo: data.seo,
+        lastUpdated: new Date().toISOString(),
+      });
+    }
+    revalidateTag("pageContent", "max");
+  } catch (error) {
+    console.error("Failed to save page:", error);
+    throw new Error("Failed to save page. Please try again.");
   }
 }
