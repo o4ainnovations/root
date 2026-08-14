@@ -83,7 +83,7 @@ export default function AccessPageClient() {
       </div>
 
       <Card className="card-depth-1 rounded-none border-border">
-        <CardContent className="p-6">
+        <CardContent className="p-4 sm:p-6">
           <div className="flex items-start gap-3">
             <Shield className="h-5 w-5 text-ink mt-0.5 shrink-0" />
             <div>
@@ -101,11 +101,11 @@ export default function AccessPageClient() {
       </Card>
 
       <Card className="card-depth-1 rounded-none border-border">
-        <CardContent className="p-6">
+        <CardContent className="p-4 sm:p-6">
           <h2 className="font-heading text-lg font-bold text-ink mb-4">
             Add User
           </h2>
-          <div className="flex items-end gap-3">
+          <div className="flex flex-col sm:flex-row sm:items-end gap-3">
             <div className="flex-1">
               <label className="label-uppercase block mb-1.5">
                 GitHub Username
@@ -121,7 +121,7 @@ export default function AccessPageClient() {
             <div>
               <label className="label-uppercase block mb-1.5">Role</label>
               <select
-                className="h-8 rounded-none border border-input bg-transparent px-2.5 py-1 text-sm text-ink"
+                className="h-8 w-full sm:w-auto rounded-none border border-input bg-transparent px-2.5 py-1 text-sm text-ink"
                 value={role}
                 onChange={(e) => setRole(e.target.value as "admin" | "editor")}
               >
@@ -129,7 +129,7 @@ export default function AccessPageClient() {
                 <option value="editor">Editor</option>
               </select>
             </div>
-            <Button className="rounded-none" onClick={handleAdd}>
+            <Button className="rounded-none w-full sm:w-auto" onClick={handleAdd}>
               Add
             </Button>
           </div>
@@ -137,7 +137,7 @@ export default function AccessPageClient() {
       </Card>
 
       <Card className="card-depth-1 rounded-none border-border">
-        <CardContent className="p-6">
+        <CardContent className="p-4 sm:p-6">
           <h2 className="font-heading text-lg font-bold text-ink mb-4">
             Authorized Users
           </h2>

@@ -210,13 +210,13 @@ export default function SettingsPageClient() {
                 key={section.label}
                 className={si > 0 ? "border-t border-border" : ""}
               >
-                <div className="px-6 py-4 bg-paper-shadow">
+                <div className="px-4 sm:px-6 py-4 bg-paper-shadow">
                   <h2 className="font-heading text-lg font-bold text-ink">
                     {section.label}
                   </h2>
                 </div>
 
-                <div className="px-6 py-4 space-y-4">
+                <div className="px-4 sm:px-6 py-4 space-y-4">
                   {section.keys.map((key) => {
                     const isTextarea = TEXTAREA_FIELDS.has(key);
                     const Component = isTextarea ? Textarea : Input;
@@ -248,7 +248,7 @@ export default function SettingsPageClient() {
               </div>
             ))}
 
-            <div className="border-t border-border px-6 py-4 flex items-center justify-end">
+            <div className="border-t border-border px-4 sm:px-6 py-4 flex items-center justify-end">
               <Button
                 type="submit"
                 disabled={saving || !settingsId}

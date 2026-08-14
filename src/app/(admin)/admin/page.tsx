@@ -52,7 +52,7 @@ export default async function AdminDashboardPage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         {stats.map((stat) => (
           <Link key={stat.label} href={stat.href}>
             <Card className="card-depth-1 transition-shadow duration-200 hover:shadow-paper">
@@ -81,7 +81,7 @@ export default async function AdminDashboardPage() {
           <div className="space-y-2">
             {press.slice(0, 5).map((r) => (
               <Card key={r._id} className="card-depth-1">
-                <CardContent className="p-4 flex items-center justify-between">
+                <CardContent className="p-4 flex flex-wrap items-center justify-between gap-2">
                   <div>
                     <p className="font-serif font-bold text-ink">{r.title}</p>
                     <p className="label-uppercase">

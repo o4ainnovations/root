@@ -117,7 +117,7 @@ export default function InvestorsEditorPage() {
 
   return (
     <div className="space-y-6">
-      <div className="page-header flex items-center justify-between">
+      <div className="page-header flex flex-wrap items-center justify-between gap-4">
         <div>
           <Link href="/admin/editor" className="label-uppercase text-xs hover:text-ink transition-colors inline-flex items-center gap-1 mb-2">
             <ArrowLeft className="h-3 w-3" /> Back to Editor
@@ -139,7 +139,7 @@ export default function InvestorsEditorPage() {
         </Button>
       </div>
 
-      <div className="card-depth-2 p-8 space-y-10">
+      <div className="card-depth-2 p-4 sm:p-8 space-y-10">
         {/* Meta Information */}
         <section className="space-y-4">
           <h2 className="font-heading text-xl font-bold text-ink border-b border-hairline pb-2">
@@ -263,14 +263,14 @@ export default function InvestorsEditorPage() {
             Downloads
           </h2>
 
-          <form onSubmit={handleAddDownload} className="flex gap-3 items-end">
+          <form onSubmit={handleAddDownload} className="flex flex-col sm:flex-row gap-3 sm:items-end">
             <div className="flex-1">
               <label className="label-uppercase block mb-2">Title</label>
               <Input value={downloadTitle} onChange={(e) => setDownloadTitle(e.target.value)} placeholder="Annual Report 2025" className="rounded-none border-border bg-background font-serif" />
             </div>
             <div>
               <label className="label-uppercase block mb-2">Category</label>
-              <select value={downloadCategory} onChange={(e) => setDownloadCategory(e.target.value as typeof downloadCategory)} className="rounded-none border border-border bg-background font-serif px-3 py-2 h-10">
+              <select value={downloadCategory} onChange={(e) => setDownloadCategory(e.target.value as typeof downloadCategory)} className="w-full sm:w-auto rounded-none border border-border bg-background font-serif px-3 py-2 h-10">
                 <option value="investor">Investor</option>
                 <option value="esg">ESG</option>
                 <option value="governance">Governance</option>
@@ -282,6 +282,7 @@ export default function InvestorsEditorPage() {
           </form>
 
           {downloads.length > 0 ? (
+            <div className="overflow-x-auto">
             <table className="w-full border border-border mt-4">
               <thead>
                 <tr className="border-b border-border">
@@ -306,6 +307,7 @@ export default function InvestorsEditorPage() {
                 ))}
               </tbody>
             </table>
+            </div>
           ) : (
             <p className="font-serif text-sm text-muted-foreground italic py-2">No downloads yet.</p>
           )}

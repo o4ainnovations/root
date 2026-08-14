@@ -195,7 +195,7 @@ export default function AdminMediaPage() {
 
       <div
         className={cn(
-          "border border-dashed border-border p-10 text-center transition-colors cursor-pointer",
+          "border border-dashed border-border p-6 sm:p-10 text-center transition-colors cursor-pointer",
           dragging && "bg-paper-highlight border-ink",
           uploading && "pointer-events-none opacity-50",
         )}
@@ -325,7 +325,7 @@ export default function AdminMediaPage() {
       )}
 
       {!loading && showFileTable && (
-        <Card className="card-depth-1">
+        <Card className="card-depth-1 overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>

@@ -183,7 +183,7 @@ export default function PortfolioEditorPage() {
 
   return (
     <div className="space-y-6">
-      <div className="page-header flex items-center justify-between">
+      <div className="page-header flex flex-wrap items-center justify-between gap-4">
         <div>
           <Link
             href="/admin/editor"
@@ -206,7 +206,7 @@ export default function PortfolioEditorPage() {
         </Button>
       </div>
 
-      <div className="card-depth-2 p-8 space-y-10">
+      <div className="card-depth-2 p-4 sm:p-8 space-y-10">
         {/* Meta Information */}
         <section className="space-y-4">
           <h2 className="font-heading text-xl font-bold text-ink border-b border-hairline pb-2">
@@ -256,7 +256,7 @@ export default function PortfolioEditorPage() {
 
         {/* Subsidiaries */}
         <section className="space-y-4 border-t border-hairline pt-8">
-          <div className="flex items-center justify-between border-b border-hairline pb-2">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-hairline pb-2">
             <h2 className="font-heading text-xl font-bold text-ink">
               Subsidiaries
             </h2>
@@ -275,6 +275,7 @@ export default function PortfolioEditorPage() {
           </div>
 
           {subsidiaries.length > 0 && (
+            <div className="overflow-x-auto">
             <table className="w-full border border-border">
               <thead>
                 <tr className="border-b border-border">
@@ -331,6 +332,7 @@ export default function PortfolioEditorPage() {
                 ))}
               </tbody>
             </table>
+            </div>
           )}
 
           {subsidiaries.length === 0 && !showAddForm && (
@@ -341,7 +343,7 @@ export default function PortfolioEditorPage() {
           )}
 
           {showAddForm && (
-            <div className="border border-border p-6 space-y-4 bg-background">
+            <div className="border border-border p-4 sm:p-6 space-y-4 bg-background">
               <h3 className="font-heading text-lg font-bold text-ink">
                 {editingSub ? "Edit Subsidiary" : "New Subsidiary"}
               </h3>

@@ -226,7 +226,7 @@ export default function CareersEditorPage() {
 
   return (
     <div className="space-y-6">
-      <div className="page-header flex items-center justify-between">
+      <div className="page-header flex flex-wrap items-center justify-between gap-4">
         <div>
           <Link
             href="/admin/editor"
@@ -249,7 +249,7 @@ export default function CareersEditorPage() {
         </Button>
       </div>
 
-      <div className="card-depth-2 p-8 space-y-10">
+      <div className="card-depth-2 p-4 sm:p-8 space-y-10">
         <section className="space-y-4">
           <h2 className="font-heading text-xl font-bold text-ink border-b border-hairline pb-2">
             Meta Information
@@ -456,8 +456,8 @@ export default function CareersEditorPage() {
         </div>
       </div>
 
-      <section className="card-depth-2 p-8 space-y-6">
-        <div className="flex items-center justify-between">
+      <section className="card-depth-2 p-4 sm:p-8 space-y-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="font-heading text-xl font-bold text-ink border-b border-hairline pb-2 flex-1">
             Job Listings
           </h2>
@@ -476,7 +476,7 @@ export default function CareersEditorPage() {
         </div>
 
         {showJobForm && (
-          <div className="border border-border p-6 space-y-4">
+          <div className="border border-border p-4 sm:p-6 space-y-4">
             <h3 className="font-heading text-lg font-bold text-ink">
               {editingJobId ? "Edit Job" : "Post a New Job"}
             </h3>

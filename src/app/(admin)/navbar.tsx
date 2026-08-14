@@ -17,13 +17,13 @@ export function AdminNavbar({ userRole }: { userRole: "admin" | "editor" }) {
 
   return (
     <header className="border-b border-border bg-paper-shadow">
-      <div className="mx-auto max-w-7xl px-6 h-14 flex items-center justify-between">
-        <nav className="flex items-center gap-1">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 min-h-14 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 py-2 sm:py-0">
+        <nav className="flex items-center gap-1 overflow-x-auto -mx-1 px-1">
           {visible.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="nav-link text-[0.6875rem] px-3 py-2 hover:bg-paper-highlight transition-colors flex items-center gap-1.5"
+              className="nav-link text-[0.6875rem] px-3 py-2 hover:bg-paper-highlight transition-colors flex items-center gap-1.5 shrink-0"
             >
               <link.icon className="h-3.5 w-3.5" />
               {link.label}
@@ -31,7 +31,7 @@ export function AdminNavbar({ userRole }: { userRole: "admin" | "editor" }) {
           ))}
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 shrink-0">
           <Badge
             variant="outline"
             className="rounded-none font-sans uppercase text-[0.625rem] tracking-wider border-border text-muted-foreground"

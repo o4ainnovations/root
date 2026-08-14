@@ -30,7 +30,7 @@ export default function EditorIndexPage() {
         {editors.map((editor) => (
           <Link key={editor.href} href={editor.href}>
             <Card className="card-depth-1 transition-shadow duration-200 hover:shadow-paper group cursor-pointer">
-              <CardContent className="p-5 flex items-center gap-4">
+              <CardContent className="p-4 sm:p-5 flex items-center gap-4">
                 <div className="p-3 bg-paper-shadow border border-border flex-shrink-0">
                   <editor.icon className="h-5 w-5 text-ink" />
                 </div>
