@@ -1,8 +1,7 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { LayoutDashboard, Pencil, Image, MessageSquare, LogOut, Settings, Shield } from "lucide-react";
-import { signOutAction } from "@/lib/signout-action";
+import { LayoutDashboard, Pencil, Image, MessageSquare, Settings, Shield } from "lucide-react";
+import { SignOutButton } from "@/components/layout/sign-out-button";
 
 const allLinks = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, adminOnly: false },
@@ -39,17 +38,7 @@ export function AdminNavbar({ userRole }: { userRole: "admin" | "editor" }) {
           >
             {userRole}
           </Badge>
-          <form action={signOutAction}>
-            <Button
-              type="submit"
-              variant="ghost"
-              size="sm"
-              className="nav-link text-[0.6875rem] gap-1.5"
-            >
-              <LogOut className="h-3.5 w-3.5" />
-              Sign Out
-            </Button>
-          </form>
+          <SignOutButton className="nav-link text-[0.6875rem] gap-1.5" />
         </div>
       </div>
     </header>

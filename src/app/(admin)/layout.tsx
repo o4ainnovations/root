@@ -2,8 +2,7 @@ import { auth } from "@/lib/auth";
 import { sanityClient } from "@/lib/sanity";
 import { AdminNavbar } from "./navbar";
 import { redirect } from "next/navigation";
-import { signOutAction } from "@/lib/signout-action";
-import { Button } from "@/components/ui/button";
+import { SignOutButton } from "@/components/layout/sign-out-button";
 
 export default async function AdminLayout({
   children,
@@ -26,9 +25,7 @@ export default async function AdminLayout({
           <p className="font-serif text-muted-foreground leading-relaxed">
             Your GitHub account does not have a username configured. Please set a username in your GitHub profile.
           </p>
-          <form action={signOutAction}>
-            <Button type="submit" variant="ghost" className="nav-link mt-6 inline-block">Sign Out</Button>
-          </form>
+          <SignOutButton className="nav-link mt-6 inline-block" variant="link" />
         </div>
       </div>
     );
@@ -51,9 +48,7 @@ export default async function AdminLayout({
           <p className="font-serif text-sm text-muted-foreground leading-relaxed">
             An admin needs to add your GitHub username to the Authorized Users list in Sanity Studio.
           </p>
-          <form action={signOutAction}>
-            <Button type="submit" variant="ghost" className="nav-link mt-6 inline-block">Sign Out</Button>
-          </form>
+          <SignOutButton className="nav-link mt-6 inline-block" variant="link" />
         </div>
       </div>
     );
