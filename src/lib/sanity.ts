@@ -26,6 +26,16 @@ export const sanityWriteClient = createClient({
   stega: { enabled: false },
 });
 
+// Fresh (non-CDN) read client — use for admin screens that must reflect
+// mutations immediately (CDN reads can serve stale data for ~60s).
+export const sanityClientFresh = createClient({
+  projectId,
+  dataset,
+  apiVersion,
+  useCdn: false,
+  stega: { enabled: false },
+});
+
 const builder = createImageUrlBuilder(sanityClient);
 
 export function urlFor(source: Parameters<typeof builder.image>[0]) {

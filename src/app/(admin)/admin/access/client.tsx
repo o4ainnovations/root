@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { sanityFetch } from "@/lib/sanity";
+import { sanityClientFresh } from "@/lib/sanity";
 import {
   addAuthorizedUser,
   removeAuthorizedUser,
@@ -24,10 +24,9 @@ export default function AccessPageClient() {
   const mounted = useRef(false);
 
   const fetchUsers = useCallback(async () => {
-    const data = await sanityFetch<AuthorizedUser[]>({
-      query: `*[_type == "authorizedUser"] | order(username asc)`,
-      tags: ["authorizedUser"],
-    });
+    const data = await sanityClientFresh.fetch<AuthorizedUser[]>(
+      `*[_type == "authorizedUser"] | order(username asc)`
+    );
     setUsers(data);
     setLoading(false);
   }, []);
